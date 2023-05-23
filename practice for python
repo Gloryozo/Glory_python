@@ -1,0 +1,127 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
+# Rest of your code
+
+# Instantiate the WebDriver object
+driver = webdriver.Chrome()
+
+try:
+# Wait for the element to be present
+    wait = WebDriverWait(driver, 40)
+
+ # Identify the frame where the element resides and switch to it
+    frame_element = wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "/html/body/app-root/div/div/div[2]/app-navigation/nav")))
+    
+    # Locate the element within the frame
+    email_address_input = wait.until(EC.presence_of_element_located((By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")))
+
+except NoSuchElementException:
+    print("Element not found.")
+    # Handle the NoSuchElementException as needed (e.g., logging, error handling)
+#except TimeoutException:
+    #print("Timeout occurred while waiting for element.")
+    # Handle the timeout exception as needed (e.g., logging, error handling, retry mechanism)
+
+# Instantiate the WebDriver object
+#from webdriver_manager.chrome import ChromeDriverManager
+
+#driver = webdriver.Chrome(ChromeDriverManager().install())
+# Rest of my code...
+
+import unittest
+
+class LoginTestCase(unittest.TestCase):
+    def setUp(self):
+        self.driver = webdriver.Chrome()
+        self.driver.get("https://auth.finnair.com/content/en/login/finnair-plus")
+
+    def tearDown(self):
+        self.driver.quit()
+
+    #Test Case 1: Verify successful login with valid email_address and password
+    def test_valid_login(self):
+      email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+      password_input = self.driver.find_element(By.ID, "PASSWORD")
+      submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+      email_address_input.send_keys("hebare1419@jwsuns.com")
+      password_input.send_keys("haba19")
+      submit_button.click()
+
+      home_page = self.driver.current_url
+      self.assertEqual(home_page, "https://auth.finnair.com/content/en/login/finnair-plus")
+
+
+    #Test Case 2: Verify unsuccessful login with invalid email_address
+    def test_invalid_email_address(self):
+        email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+        password_input = self.driver.find_element(By.ID, "PASSWORD")
+        submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+        email_address_input.send_keys("ihebare1419@jwsuns")
+        password_input.send_keys("haba19")
+        submit_button.click()
+
+        error_message = self.driver.find_element_by_id("error-message").text
+        self.assertEqual(error_message, "Invalid email_address")
+
+    #Test Case 3: Verify unsuccessful login with invalid password
+    def test_invalid_password(self):
+        email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+        password_input = self.driver.find_element(By.ID, "PASSWORD")
+        submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+        email_address_input.send_keys("hebare1419@jwsuns.com")
+        password_input.send_keys("ha")
+        submit_button.click()
+
+        error_message = self.driver.find_element_by_id("error-message").text
+        self.assertEqual(error_message, "Invalid password")
+
+    #Test Case 4: Verify unsuccessful login with blank email_address and password
+    def test_blank__email_address_and_password(self):
+        email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+        password_input = self.driver.find_element(By.ID, "PASSWORD")
+        submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+        email_address_input.send_keys(" ")
+        password_input.send_keys(" ")
+        submit_button.click()
+
+        error_message = self.driver.find_element_by_id("error-message").text
+        self.assertEqual(error_message, "requesting email and password")
+
+    #Test Case 5: Verify unsuccessful login with incorrect password format
+    def test_invalid_password_format(self):
+        email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+        password_input = self.driver.find_element(By.ID, "PASSWORD")
+        submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+        email_address_input.send_keys("hebare1419@jwsuns.com")
+        password_input.send_keys("123456")
+        submit_button.click()
+
+        error_message = self.driver.find_element_by_id("error-message").text
+        self.assertEqual(error_message, "incorrect password format")
+
+    #Test Case 6: Verify that user is redirected to the intended page after successful login
+    def test_redirection_to_next_page(self):
+        email_address_input = self.driver.find_element(By.ID, "EMAIL ADDRESS OR FINNAIR PLUS NUMBER")
+        password_input = self.driver.find_element(By.ID, "PASSWORD")
+        submit_button = self.driver.find_element(By.ID, "LOG IN")
+
+        email_address_input.send_keys("hebare1419@jwsuns.com")
+        password_input.send_keys("haba19")
+        submit_button.click()
+
+        home_page = self.driver.current_url
+        self.assertEqual(home_page, "https://auth.finnair.com/content/en/login/finnair-plus")
+            
+    # Add more test cases as needed
+
+if __name__ == "__main__":
+    unittest.main()
